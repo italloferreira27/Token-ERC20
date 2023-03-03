@@ -1,12 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
     <title>Token_ERC20</title>
 </head>
 <body>
+
+    <div id="conectar">
+        <button id="btn_conectar" style="display: none;">Conecte-se ao MetaMask</button>
+    </div>
+
+    <div id="functions" style="display: none;">
+        <p>Nome: <div id="nome">&nbsp;</div></p>
+        <p>Conta: <div id="conta">&nbsp;</div></p>
+        <p>Saldo: <div id="saldo">&nbsp;</div></p>
+        <p>Símbolo: <div id="simbolo">&nbsp;</div></p>
+
+        <h3>Simples transferência</h3>
+        <div>
+            <p>Conta: <input id="address" type="text"></p>
+            <p>Valor: <input id="value" type="text"></p>
+            <button id="transferir">Transferir</button>
+        </div>
+            
+    </div>
+
+    <script>
+        const web3 = new Web3(window.ethereum);
+        var address = "0xcE61769835B9d235d735BDC0E9102d676dA91057";
+        var ABI = [ { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Transfer", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" } ], "name": "allowance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "approve", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "account", "type": "address" } ], "name": "balanceOf", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [], "name": "decimals", "outputs": [ { "internalType": "uint8", "name": "", "type": "uint8" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" } ], "name": "decreaseAllowance", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "addedValue", "type": "uint256" } ], "name": "increaseAllowance", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "name", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [], "name": "symbol", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function", "constant": true }, { "inputs": [ { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transfer", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "from", "type": "address" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" } ];
+        var contract = new web3.eth.Contract(ABI, address);
+
+        async function run(){
+            var provider = window.ethereum;
+            var conta;
+
+            if(!provider){
+                document.getElementById("conectar").innerHTML = "Por favor, instale o MetaMask!";
+            }
+            else{
+                let contas = await ethereum.request({method: 'eth_accounts'});
+                conta = contas[0];
+                if(contas.length == 0){
+                    alert("Conecte-se ao MetaMask");
+                    document.getElementById("btn_conectar").style.display = "block";
+                    document.getElementById("btn_conectar").addEventListener("click", conectar_MM);
+                }
+                else{
+                    let id = await ethereum.request({method: 'eth_chainId'});
+                    //console.log(id);
+                    if(id == 0x539){
+                        //console.log("ENTREI!")
+                        infoAccounts();
+                        document.getElementById("functions").style.display = "block";
+                        document.getElementById("transferir").addEventListener("click", transfer);
+
+                    }
+                    else{
+                        alert("Por favor, conecte-se a rede Localhost!");
+                    }
+
+                }
+            }
+            async function transfer(){
+                let _conta = document.getElementById("address").value;
+                let valor = document.getElementById("value").value;
+
+                contract.methods.transfer(_conta, valor).send({from: conta});
+            }
+            
+            async function infoAccounts(){
+                let nome = await contract.methods.name().call();
+                let conta = await web3.eth.getAccounts();
+                let saldo = await contract.methods.balanceOf(conta[0]).call();
+                let simbolo = await contract.methods.symbol().call();
+
+                //console.log(nome);
+                document.getElementById("nome").innerHTML = nome;
+                document.getElementById("conta").innerHTML = conta[0];
+                document.getElementById("saldo").innerHTML = saldo;
+                document.getElementById("simbolo").innerHTML = simbolo;
+            }
+
+            async function conectar_MM(){
+                await ethereum.request({ method: 'eth_requestAccounts'});
+                window.location.reload();
+            }
+
+            ethereum.on('chainChanged', () => {window.location.reload()});
+            ethereum.on('accountsChanged', () => {window.location.reload()});
+        }
+        run();
+    </script>
     
 </body>
 </html>

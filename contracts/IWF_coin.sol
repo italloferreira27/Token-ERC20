@@ -12,4 +12,3 @@ contract IWF_coin is ERC20 {
         _mint(msg.sender, amount);
     }
 }
-
