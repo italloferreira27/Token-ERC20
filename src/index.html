@@ -15,18 +15,57 @@
     </div>
 
     <div id="functions" style="display: none;">
-        <p>Nome: <div id="nome">&nbsp;</div></p>
-        <p>Conta: <div id="conta">&nbsp;</div></p>
-        <p>Saldo: <div id="saldo">&nbsp;</div></p>
-        <p>Símbolo: <div id="simbolo">&nbsp;</div></p>
-
-        <h3>Simples transferência</h3>
-        <div>
-            <p>Conta: <input id="address" type="text"></p>
-            <p>Valor: <input id="value" type="text"></p>
-            <button id="transferir">Transferir</button>
+        <div id="info">
+            <p>Name: <div id="nome">&nbsp;</div></p>
+            <p>Address: <div id="conta">&nbsp;</div></p>
+            <p>Balance: <div id="saldo">&nbsp;</div></p>
+            <p>Symbol: <div id="simbolo">&nbsp;</div></p>
         </div>
-            
+
+        <h2>Transfer</h2>
+        <div>
+            <p>Address: <input id="address" type="text"></p>
+            <p>Value: <input id="value" type="text"></p>
+            <button id="transfer">Transfer</button>
+        </div>
+
+        <h2>Approve</h2>
+        <div>
+            <p>Spender: <input id="app_spender" type="text"></p>
+            <p>Amount: <input id="amount" type="text"></p>
+            <button id="aprove">Approve</button>
+        </div>
+
+        <h2>Decrease Allowance</h2>
+        <div>
+            <p>Spender: <input id="dec_spender" type="text"></p>
+            <p>Subtracted Value: <input id="subtracted" type="text"></p>
+            <button id="decrease">Decrease</button>
+        </div>
+
+        <h2>Increase Allowance</h2>
+        <div>
+            <p>Spender: <input id="inc_spender" type="text"></p>
+            <p>Increase Value: <input id="increase" type="text"></p>
+            <button id="btn_increase">Increase</button>
+        </div>
+
+        <h2>Transfer From</h2>
+        <div>
+            <p>From: <input id="from" type="text"></p>
+            <p>To: <input id="to" type="text"></p>
+            <p>Amount: <input id="tf_amount" type="text"></p>
+            <button id="tf_transfer">Transfer</button>
+        </div>
+
+        <h2>Allowance</h2>
+        <div>
+            <p>Owner: <input id="owner" type="text"></p>
+            <p>Spender: <input id="alw_spender" type="text"></p>
+            <button id="_allowance">Allowance</button>
+        </div>
+        <output id="value_allowance" type="text">
+
     </div>
 
     <script>
@@ -57,19 +96,56 @@
                         //console.log("ENTREI!")
                         infoAccounts();
                         document.getElementById("functions").style.display = "block";
-                        document.getElementById("transferir").addEventListener("click", transfer);
-
+                        document.getElementById("transfer").addEventListener("click", _transfer);
+                        document.getElementById("aprove").addEventListener("click", approve);
+                        document.getElementById("decrease").addEventListener("click", decreaseAllowance);
+                        document.getElementById("btn_increase").addEventListener("click", increaseAllowance);
+                        document.getElementById("tf_transfer").addEventListener("click", transferFrom);
+                        document.getElementById("_allowance").addEventListener("click", allowance);
                     }
                     else{
                         alert("Por favor, conecte-se a rede Localhost!");
+                        document.getElementById("conectar").innerHTML = "Por favor, Conecte-se a rede Localhost!";
                     }
 
                 }
             }
-            async function transfer(){
+            async function allowance(){
+                let owner = document.getElementById("owner").value;
+                let spender = document.getElementById("alw_spender").value;
+                let balance = await contract.methods.allowance(owner, spender).call();
+                //console.log(owner, spender, balance);
+                document.getElementById("value_allowance").innerHTML = balance;
+            }
+
+            async function transferFrom(){
+                let _from = document.getElementById("from").value;
+                let _to = document.getElementById("to").value;
+                let _amount = document.getElementById("tf_amount").value;
+                contract.methods.transferFrom(_from, _to, _amount).send({from: conta})
+            }
+
+            async function increaseAllowance(){
+                let spender = document.getElementById("inc_spender").value;
+                let increase = document.getElementById("increase").value;
+                contract.methods.increaseAllowance(spender, increase).send({from: conta});
+            } 
+
+            async function decreaseAllowance(){
+                let spender = document.getElementById("dec_spender").value;
+                let subtracted = document.getElementById("subtracted").value;
+                contract.methods.decreaseAllowance(spender, subtracted).send({from: conta});
+            }
+
+            async function approve(){
+                let spender = document.getElementById("app_spender").value;
+                let amount = document.getElementById("amount").value;
+                contract.methods.approve(spender, amount).send({from: conta});
+            }
+
+            async function _transfer(){
                 let _conta = document.getElementById("address").value;
                 let valor = document.getElementById("value").value;
-
                 contract.methods.transfer(_conta, valor).send({from: conta});
             }
             
