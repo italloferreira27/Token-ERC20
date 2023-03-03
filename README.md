@@ -10,3 +10,6 @@ truffle
 descomentar o develoment no truffle-config.js
 
 open workplace in ganache
+
+
+npm i @openzeppelin/contracts para importar o token
