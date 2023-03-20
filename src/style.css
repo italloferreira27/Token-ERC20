@@ -2,11 +2,12 @@ p{
     display: flex;
     padding: 2px;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     border: 0px;
     margin: 0px;
 }
+
 output{
     display: flex;
     justify-content: center;
@@ -20,16 +21,23 @@ div {
     /* font-weight: bold; */
     border: 0px;
     margin: 8px;
-    margin-top: 0px;
 }
+
 h2 {
     display: flex;
     justify-content: center;
     color: rgb(14, 14, 14);
     margin-top: 16px;
     margin-bottom: 0px;
-    font-size: 20px;
+    font-size: 24px;
 }
+
+#info {
+    background: #c5c5ca;
+    border-radius: 5px;
+    border: #1d1d1d solid 2px;
+}
+
 #info p {
     margin: 8px;
     margin-right: 0px;
@@ -47,9 +55,11 @@ html {
     background-color: #aaaaaa7c;
 }
 
-input{
-    
-}
+/* button {
+    border-radius: 4px;
+    color: #c71919;
+    background: #fff;
+} */
 
 /* body, div, p, h2{
     display: flex;
